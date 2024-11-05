@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['permission:View Products'], ['only' => ['index']]);
+        $this->middleware(['permission:Create Products'], ['only' => ['create']]);
+        $this->middleware(['permission:Edit Products'], ['only' => ['edit']]);
+        $this->middleware(['permission:Delete Products'], ['only' => ['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */

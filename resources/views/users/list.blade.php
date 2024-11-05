@@ -4,7 +4,11 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Users') }}
             </h2>
-            <a href="{{ route('users.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+@can('Create User')
+
+<a href="{{ route('users.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+
+@endcan
 
         </div>
     </x-slot>
@@ -46,11 +50,13 @@
                             <!-- Edit Button -->
 
 
+@can('Edit User')
+<a href="{{ route('users.edit', $user->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
+@endcan
 
-                            <a href="{{ route('users.edit', $user->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
 
   <!-- Delete Button (Form) -->
-
+@can('Delete User')
   <form action="{{ route('users.destroy', $user->id) }}" method="POST">
     @csrf
     @method('DELETE')
@@ -58,6 +64,7 @@
         Delete
     </button>
 </form>
+@endcan
 
 
 

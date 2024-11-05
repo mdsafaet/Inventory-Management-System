@@ -7,8 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 
+
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['permission:View Permission'], ['only' => ['index']]);
+        $this->middleware(['permission:Create Permission'], ['only' => ['create']]);
+        $this->middleware(['permission:Edit Permission'], ['only' => ['edit']]);
+        $this->middleware(['permission:Delete Permission'], ['only' => ['destroy']]);
+
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -37,9 +48,9 @@ class PermissionController extends Controller
         [
             'name'=>'required|unique:permissions,name'
         ]);
-               
+
         if($validator->passes()){
-            Permission::create([      
+            Permission::create([
              'name'=> $request->name]);
 
              return redirect()->route('permissions.index')->with('success', 'Permission Created Successfully');
@@ -56,7 +67,7 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      */
- 
+
 
     /**
      * Show the form for editing the specified resource.
@@ -74,16 +85,16 @@ class PermissionController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-   
+
     {
         $permission = Permission::findOrFail($id);
         $validator = Validator::make($request->all(),
         [
             'name'=>'required|unique:permissions,name, '.$id.',id'
         ]);
-               
+
         if($validator->passes()){
-           
+
 
             $permission->name= $request->name;
             $permission->save();
@@ -98,7 +109,7 @@ class PermissionController extends Controller
 
             }
     }
-    
+
 
     /**
      * Remove the specified resource from storage.

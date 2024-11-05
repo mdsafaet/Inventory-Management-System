@@ -4,7 +4,10 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Roles') }}
             </h2>
-            <a href="{{ route('roles.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+@can('Create Role')
+<a href="{{ route('roles.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+@endcan
+
         </div>
     </x-slot>
 
@@ -36,7 +39,11 @@
                                 <!-- Flex container for buttons -->
                                 <div class="flex space-x-2">
                                     <!-- Edit Button -->
+                                      @can('Edit Role')
                                     <a href="{{ route('roles.edit', $role->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
+                                    @endcan
+@can('Delete Role')
+
 
                                     <form action="{{ route('roles.destroy', $role->id) }}" method="POST">
                                         @csrf
@@ -46,7 +53,7 @@
                                         </button>
                                     </form>
 
-
+                                    @endcan
 
                                 </div>
                             </td>

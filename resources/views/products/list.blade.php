@@ -4,7 +4,10 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Products') }}
             </h2>
-            <a href="{{ route('products.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+@can('Create Products')
+<a href="{{ route('products.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
+@endcan
+
         </div>
     </x-slot>
 
@@ -35,8 +38,11 @@
                             <td class="px-6 py-4">
                                 <div class="flex space-x-2">
                                     <!-- Edit Button -->
+                                    @can('Edit Products')
                                     <a href="{{ route('products.edit', $product->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
+                                    @endcan
 
+                                    @can('Delete Prducts')
                                     <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -44,6 +50,7 @@
                                             Delete
                                         </button>
                                     </form>
+                                    @endcan
 
 
                                 </div>
