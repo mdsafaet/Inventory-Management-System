@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -11,7 +13,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::latest()->paginate(10);
+        return view('products.list',[
+       'products'=>$products
+      ]);
     }
 
     /**
@@ -19,7 +24,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        {
+            return view('products.create');
+        }
     }
 
     /**
@@ -27,7 +34,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'name'=> 'required',
+             'quantity'=> 'required',
+             'price'=> 'required',
+     ]);
+     if ($validator->passes()){
+
+        $product = new Product();
+        $product->name = $request->name;
+        $product->quantity = $request->quantity;
+        $product->price = $request->price;
+        $product->save();
+
+
+    return redirect()->route('products.index')->with('success', 'Prod created successfully.');
+
+    }
+    else{
+    return redirect()->route('products.create')->withInput()->withErrors($validator);
+    }
     }
 
     /**
@@ -43,15 +69,40 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+            return view('products.edit',[
+            'product'=>$product
+]);
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
+
     {
-        //
+        $product = Product::findOrFail($id);
+        $validator = Validator::make($request->all(),[
+            'name'=> 'required',
+             'quantity'=> 'required',
+             'price'=> 'required',
+     ]);
+     if ($validator->passes()){
+
+
+        $product->name = $request->name;
+        $product->quantity = $request->quantity;
+        $product->price = $request->price;
+        $product->save();
+
+
+    return redirect()->route('products.index')->with('success', 'Product created successfully.');
+
+    }
+    else{
+    return redirect()->route('products.edit')->withInput()->withErrors($validator);
+    }
+
     }
 
     /**
@@ -59,6 +110,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }
