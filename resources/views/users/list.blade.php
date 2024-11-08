@@ -4,11 +4,13 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Users') }}
             </h2>
+
 @can('Create User')
-
 <a href="{{ route('users.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
-
 @endcan
+
+
+
 
         </div>
     </x-slot>
@@ -25,7 +27,6 @@
             <th class="px-6 py-3 text-left font-medium text-gray-500">Name</th>
             <th class="px-6 py-3 text-left font-medium text-gray-500">Email</th>
             <th class="px-6 py-3 text-left font-medium text-gray-500">Role</th>
-
             <th class="px-6 py-3 text-left font-medium text-gray-500">Created</th>
             <th class="px-6 py-3 text-left font-medium text-gray-500">Action</th>
         </tr>
@@ -52,12 +53,12 @@
 
 @can('Edit User')
 <a href="{{ route('users.edit', $user->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
+
 @endcan
 
 
-  <!-- Delete Button (Form) -->
 @can('Delete User')
-  <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+<form action="{{ route('users.destroy', $user->id) }}" method="POST">
     @csrf
     @method('DELETE')
     <button type="submit" class="bg-red-600 text-sm rounded-md px-3 py-2 hover:bg-red-500" onclick="return confirm('Are you sure you want to delete this User?')">
@@ -65,8 +66,7 @@
     </button>
 </form>
 @endcan
-
-
+                    <!-- Delete Button (Form) -->
 
 
 

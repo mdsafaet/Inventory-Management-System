@@ -7,6 +7,8 @@
 @can('Create Permission')
 <a href="{{ route('permissions.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
 @endcan
+
+
 </div>
 
     </x-slot>
@@ -39,21 +41,25 @@
                                     <!-- Edit Button -->
 @can('Edit Permission')
 <a href="{{ route('permissions.edit', $permission->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
+
 @endcan
 
+
+
+
 @can('Delete Permission')
-
-
-
                                     <!-- Delete Button (Form) -->
-                                  <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST">
+                                    <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-red-600 text-sm rounded-md px-3 py-2 hover:bg-red-500" onclick="return confirm('Are you sure you want to delete this permission?')">
                                             Delete
                                         </button>
                                     </form>
-                                    @endcan
+
+@endcan
+
+
 
 
 

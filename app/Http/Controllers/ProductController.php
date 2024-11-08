@@ -11,13 +11,15 @@ class ProductController extends Controller
     public function __construct()
     {
 
-        $this->middleware(['permission:View Products'], ['only' => ['index']]);
-        $this->middleware(['permission:Create Products'], ['only' => ['create']]);
-        $this->middleware(['permission:Edit Products'], ['only' => ['edit']]);
-        $this->middleware(['permission:Delete Products'], ['only' => ['destroy']]);
+        $this->middleware(['permission:View Product'], ['only' => ['index']]);
+        $this->middleware(['permission:Create Product'], ['only' => ['create']]);
+        $this->middleware(['permission:Edit Product'], ['only' => ['edit']]);
+        $this->middleware(['permission:Delete Product'], ['only' => ['destroy']]);
+        $this->middleware(['permission:Status Product'],['only' => ['updateStatus']]);
 
 
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -124,4 +126,23 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
+
+    public function updateStatus(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
+
+    // Get the status from the request (e.g., 'approved' or 'rejected')
+    $status = $request->query('status', 'pending');
+
+    // Validate that the status is either 'approved' or 'rejected'
+    if (in_array($status, ['approved', 'rejected'])) {
+        $product->status = $status;
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', "Product status updated to {$status}.");
+    }
+
+    return redirect()->route('products.index')->with('error', 'Invalid status update.');
+}
+
 }
