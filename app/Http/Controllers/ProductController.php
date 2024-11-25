@@ -127,22 +127,22 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 
+
+
     public function updateStatus(Request $request, $id)
-{
-    $product = Product::findOrFail($id);
-
-    // Get the status from the request (e.g., 'approved' or 'rejected')
-    $status = $request->query('status', 'pending');
-
-    // Validate that the status is either 'approved' or 'rejected'
-    if (in_array($status, ['approved', 'rejected'])) {
-        $product->status = $status;
-        $product->save();
-
-        return redirect()->route('products.index')->with('success', "Product status updated to {$status}.");
+    {
+        $product = Product::findOrFail($id);
+    
+        $status = $request->query('status');
+    
+        // Check if the status is valid and update it
+        if ($status === 'approved' || $status === 'rejected') {
+            $product->update(['status' => $status]);
+    
+            return redirect()->route('products.index')
+                ->with('success', "Product status updated to {$status}.");
+        }
+    
+        return back()->with('error', 'Invalid status.');
     }
-
-    return redirect()->route('products.index')->with('error', 'Invalid status update.');
-}
-
 }
