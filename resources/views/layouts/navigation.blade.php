@@ -16,30 +16,30 @@
                         {{ __('Inventory Management System') }}
                     </x-nav-link>
                 </div>
-                {{-- @can('View Permission') --}}
+                @can('View Permission')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.index')">
                         {{ __('Permissions') }}
                     </x-nav-link>
                 </div>
-                {{-- @endcan --}}
+                @endcan
 
-                {{-- @can('View Role') --}}
+                @can('View Role')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')">
                         {{ __('Roles') }}
                     </x-nav-link>
                 </div>
 
-                {{-- @endcan --}}
+                @endcan
 
-                {{-- @can('View Product') --}}
+                @can('View Product')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Products') }}
                     </x-nav-link>
                 </div>
-                {{-- @endcan --}}
+                @endcan
 
                 {{-- @can('View User') --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

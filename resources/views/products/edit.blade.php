@@ -14,7 +14,7 @@
                 <div class="p-6 text-gray-900">
 
                     <!-- Form to Edit Product -->
-                    <form action="{{ route('products.update', $product->id) }}" method="POST">
+                    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <!-- Name Field -->
                         <div class="mb-6">
@@ -26,6 +26,22 @@
                                 <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+
+                                               <!-- Photo Field -->
+
+                        <div class="mb-4">
+                            <label for="photo" class="text-lg font-medium">Photo:</label>
+                            <input type="file" name="photo" id="photo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            @error('photo')
+                                <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                <!-- Existing Photo Preview -->
+                <div class="mb-4">
+                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover">
+                </div>
+
 
                         <!-- Quantity Field -->
                         <div class="mb-6">
@@ -48,6 +64,7 @@
                                 <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+
 
                         <!-- Submit Button -->
                         <div class="mt-6">

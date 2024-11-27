@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['permission:View Product'], ['only' => ['index']]);
+        $this->middleware(['permission:Create Product'], ['only' => ['create']]);
+        $this->middleware(['permission:Edit Product'], ['only' => ['edit']]);
+        $this->middleware(['permission:Delete Product'], ['only' => ['destroy']]);
+        $this->middleware(['permission:Status Product'],['only' => ['updateStatus']]);
+
+
+    }
+
 
 
     /**
@@ -36,33 +50,31 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required',
-             'quantity'=> 'required',
-             'price'=> 'required',
-             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-     ]);
-     if ($validator->passes()){
-
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'quantity' => 'required',
+            'price' => 'required',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->route('products.create')->withInput()->withErrors($validator);
+        }
+    
         $product = new Product();
         $product->name = $request->name;
         $product->quantity = $request->quantity;
         $product->price = $request->price;
-
-        if ($request->hasFile('photo')) {
-            $imageName = time() . '.' . $request->photo->extension();
-            $request->photo->move(public_path('images'), $imageName);  // Save the photo to 'public/images'
-            $product->photo = 'images/' . $imageName;  // Store the image path in the database
-
-            $product->save();
-            }
     
-            return redirect()->route('products.index')->with('success', 'Prod created successfully.');
-        } else {
-            return redirect()->route('products.create')->withInput()->withErrors($validator);
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->store('products', 'public'); // Save to 'storage/app/public/products'
+            $product->photo = $imagePath; // Save relative path
         }
+    
+        $product->save();
+    
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -86,50 +98,59 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
+{
+    $product = Product::findOrFail($id);
 
-    {
-        $product = Product::findOrFail($id);
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required',
-             'quantity'=> 'required',
-             'price'=> 'required',
-             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-     ]);
+    $validator = Validator::make($request->all(), [
+        'name' => 'required',
+        'quantity' => 'required',
+        'price' => 'required',
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-     if ($validator->passes()){
+    if ($validator->fails()) {
+        return redirect()->route('products.edit', $product->id)->withInput()->withErrors($validator);
+    }
 
+    $product->name = $request->name;
+    $product->quantity = $request->quantity;
+    $product->price = $request->price;
 
-        $product->name = $request->name;
-        $product->quantity = $request->quantity;
-        $product->price = $request->price;
+    if ($request->hasFile('photo')) {
+        // Delete the old photo if it exists
+        if ($product->photo && Storage::disk('public')->exists($product->photo)) {
+            Storage::disk('public')->delete($product->photo);
+        }
 
-        if ($request->hasFile('photo')) {
-            // Delete the old photo if it exists
-            if ($product->photo && file_exists(public_path($product->photo))) {
-                unlink(public_path($product->photo));  // Delete the old photo from the public directory
-            }
-            // Upload the new photo
-            $imageName = time() . '.' . $request->photo->extension();
-            $request->photo->move(public_path('images'), $imageName);  // Save the new photo to 'public/images'
-            $product->photo = 'images/' . $imageName;  // Store the new image path in the database
+        // Save the new photo
+        $imagePath = $request->file('photo')->store('products', 'public');
+        $product->photo = $imagePath;
+    }
 
-            $product->save();
-            
-            }
+    $product->save();
+
+    return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+}
     
-            return redirect()->route('products.index')->with('success', 'Product created successfully.');
+public function destroy(string $id)
+{
+    $product = Product::findOrFail($id);
+
+    if ($product->photo) {
+        $filePath = $product->photo;
+
+        // Check if file exists
+        if (Storage::disk('public')->exists($filePath)) {
+            Storage::disk('public')->delete($filePath); // Delete the file
         } else {
-            return redirect()->route('products.edit')->withInput()->withErrors($validator);
+            Log::error("File not found: " . $filePath);
         }
     }
-    
-    public function destroy(string $id)
-    {
-        $product = Product::findOrFail($id);
-        $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
-    }
 
+    $product->delete();
+
+    return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+}
 
 
     public function updateStatus(Request $request, $id)

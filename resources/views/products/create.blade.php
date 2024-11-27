@@ -14,11 +14,11 @@
                 <div class="p-6 text-gray-900">
 
                                                        <!-- Form to Create a Permission -->
-                    <form action="{{ route('products.store') }}" method="POST">
+                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <!-- Name Field -->
                         <div class="mb-4">
-                            <label class="text-lg font-medium">Name:</label>
+                            <label for="name" class="text-lg font-medium">Name:</label>
                             <div class="my-3">
                                 <input value="{{ old('name') }}" type="text" name="name" id="name" class="border-gray-300 shadow-sm w-1/2 rounded-lg" placeholder="Enter Name">
                             </div>
@@ -27,9 +27,18 @@
                             @enderror
                         </div>
 
+                            <!-- Photo Field -->
+                        <div class="mb-4">
+                            <label for="photo" class="text-lg font-medium">Photo:</label>
+                            <input type="file" name="photo" id="photo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            @error('photo')
+                                <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Quantity Field -->
                         <div class="mb-4">
-                            <label class="text-lg font-medium">Quantity:</label>
+                            <label for="quantity" class="text-lg font-medium">Quantity:</label>
                             <div class="my-3">
                                 <input value="{{ old('quantity') }}" type="number" name="quantity" id="quantity" class="border-gray-300 shadow-sm w-1/2 rounded-lg" placeholder="Enter Quantity">
                             </div>
@@ -40,7 +49,7 @@
 
                         <!-- Price Field -->
                         <div class="mb-4">
-                            <label class="text-lg font-medium">Price:</label>
+                            <label for="price" class="text-lg font-medium">Price:</label>
                             <div class="my-3">
                                 <input value="{{ old('price') }}" type="text" name="price" id="price" class="border-gray-300 shadow-sm w-1/2 rounded-lg" placeholder="Enter Price">
                             </div>
@@ -48,6 +57,8 @@
                                 <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+
+                  
 
                         <div class="">
                           <button class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Submit Product</button>
