@@ -8,17 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function __construct()
-    {
 
-        $this->middleware(['permission:View Product'], ['only' => ['index']]);
-        $this->middleware(['permission:Create Product'], ['only' => ['create']]);
-        $this->middleware(['permission:Edit Product'], ['only' => ['edit']]);
-        $this->middleware(['permission:Delete Product'], ['only' => ['destroy']]);
-        $this->middleware(['permission:Status Product'],['only' => ['updateStatus']]);
-
-
-    }
 
     /**
      * Display a listing of the resource.
@@ -50,6 +40,7 @@ class ProductController extends Controller
             'name'=> 'required',
              'quantity'=> 'required',
              'price'=> 'required',
+             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
      ]);
      if ($validator->passes()){
 
@@ -57,15 +48,19 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->quantity = $request->quantity;
         $product->price = $request->price;
-        $product->save();
 
+        if ($request->hasFile('photo')) {
+            $imageName = time() . '.' . $request->photo->extension();
+            $request->photo->move(public_path('images'), $imageName);  // Save the photo to 'public/images'
+            $product->photo = 'images/' . $imageName;  // Store the image path in the database
 
-    return redirect()->route('products.index')->with('success', 'Prod created successfully.');
-
-    }
-    else{
-    return redirect()->route('products.create')->withInput()->withErrors($validator);
-    }
+            $product->save();
+            }
+    
+            return redirect()->route('products.index')->with('success', 'Prod created successfully.');
+        } else {
+            return redirect()->route('products.create')->withInput()->withErrors($validator);
+        }
     }
 
     /**
@@ -98,28 +93,36 @@ class ProductController extends Controller
             'name'=> 'required',
              'quantity'=> 'required',
              'price'=> 'required',
+             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
      ]);
+
      if ($validator->passes()){
 
 
         $product->name = $request->name;
         $product->quantity = $request->quantity;
         $product->price = $request->price;
-        $product->save();
 
+        if ($request->hasFile('photo')) {
+            // Delete the old photo if it exists
+            if ($product->photo && file_exists(public_path($product->photo))) {
+                unlink(public_path($product->photo));  // Delete the old photo from the public directory
+            }
+            // Upload the new photo
+            $imageName = time() . '.' . $request->photo->extension();
+            $request->photo->move(public_path('images'), $imageName);  // Save the new photo to 'public/images'
+            $product->photo = 'images/' . $imageName;  // Store the new image path in the database
 
-    return redirect()->route('products.index')->with('success', 'Product created successfully.');
-
+            $product->save();
+            
+            }
+    
+            return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        } else {
+            return redirect()->route('products.edit')->withInput()->withErrors($validator);
+        }
     }
-    else{
-    return redirect()->route('products.edit')->withInput()->withErrors($validator);
-    }
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);

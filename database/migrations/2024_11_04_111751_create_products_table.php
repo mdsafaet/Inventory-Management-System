@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('photo')->nullable();
             $table->integer('quantity');
             $table->decimal('price');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-
             $table->timestamps();
         });
     }

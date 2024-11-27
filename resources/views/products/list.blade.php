@@ -4,9 +4,9 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Products') }}
             </h2>
-@can('Create Product')
+{{-- @can('Create Product') --}}
 <a href="{{ route('products.create') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Create</a>
-@endcan
+{{-- @endcan --}}
 
 
         </div>
@@ -22,6 +22,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left font-medium text-gray-500">Serial No:</th>
                         <th class="px-6 py-3 text-left font-medium text-gray-500">Name</th>
+                        <th class="px-6 py-3 text-left font-medium text-gray-500">Photo</th>
                         <th class="px-6 py-3 text-left font-medium text-gray-500">Quantity</th>
                         <th class="px-6 py-3 text-left font-medium text-gray-500">Price</th>
                         <th class="px-6 py-3 text-left font-medium text-gray-500">Status</th>
@@ -37,12 +38,15 @@
                             <td class="px-6 py-4">{{ $product->name }}</td>
                             <td class="px-6 py-4">{{ $product->quantity }}</td>
                             <td class="px-6 py-4">{{ $product->price }}</td>
+                            <td class="px-6 py-4">
+                            <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover">
+                                
                             <td class="px-6 py-4">{{ ucfirst($product->status) }}</td>
 
 
                             <td class="px-6 py-4">
                                 <div class="flex space-x-2">
-@can('Status Product')
+{{-- @can('Status Product') --}}
 
   <!-- Status Button -->
   <form action="{{ route('products.updateStatus', ['id' => $product->id, 'status' => 'approved']) }}" method="POST" class="inline-block">
@@ -61,14 +65,14 @@
     </button>
 </form>
 
-@endcan
+{{-- @endcan --}}
                                     <!-- Edit Button -->
-@can('Edit Product')
+{{-- @can('Edit Product') --}}
 <a href="{{ route('products.edit', $product->id) }}" class="bg-slate-700 text-sm rounded-md px-3 py-2 hover:bg-slate-600">Edit</a>
-@endcan
+{{-- @endcan --}}
 
 
-@can('Delete Product')
+{{-- @can('Delete Product') --}}
 
 <form action="{{ route('products.destroy', $product->id) }}" method="POST">
     @csrf
@@ -78,7 +82,7 @@
     </button>
 </form>
 
-@endcan
+{{-- @endcan --}}
 
 
                                 </div>
